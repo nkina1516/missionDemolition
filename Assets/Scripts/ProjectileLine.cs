@@ -5,6 +5,9 @@ using UnityEngine;
 [RequireComponent( typeof(LineRenderer) )]
 public class ProjectileLine : MonoBehaviour
 {
+    static List <ProjectileLine> PROJ_LINES = new List<ProjectileLine>();
+
+    private const float         DIM_MULT   = 0.75f;
 
     private LineRenderer _line;                                                
     private bool         _drawing = true;
@@ -15,7 +18,9 @@ public class ProjectileLine : MonoBehaviour
         _line.positionCount = 1;                                               
         _line.SetPosition( 0, transform.position );
  
-        _projectile = GetComponentInParent<Projectile>();                      
+        _projectile = GetComponentInParent<Projectile>();
+
+        ADD_LINE( this );                     
     }
  
     void FixedUpdate() {
@@ -24,13 +29,4 @@ public class ProjectileLine : MonoBehaviour
             _line.SetPosition( _line.positionCount - 1, transform.position );
             // If the Projectile Rigidbody is sleeping, stop drawing
             if ( _projectile != null ) {                                      
-                if ( !_projectile.awake ) {
-                    _drawing = false;
-                    _projectile = null;
-                }
-            }
-        }
-    }
-
-
-}
+                if ( 
