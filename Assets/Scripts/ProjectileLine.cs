@@ -17,7 +17,7 @@ public class ProjectileLine : MonoBehaviour
         _line = GetComponent<LineRenderer>();
         _line.positionCount = 1;                                               
         _line.SetPosition( 0, transform.position );
- 
+
         _projectile = GetComponentInParent<Projectile>();
 
         ADD_LINE( this );                     
@@ -37,7 +37,7 @@ public class ProjectileLine : MonoBehaviour
         }
     }
 
-    private void OnDestroy() {                                                 // c
+    private void OnDestroy() {                                                 
         // Remove this ProjectileLine from PROJ_LINES
         PROJ_LINES.Remove( this );
     }

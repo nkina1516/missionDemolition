@@ -1,9 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+[RequireComponent( typeof(LineRenderer) )]
 public class Slingshot : MonoBehaviour
 {
+
     [Header("Inscribed")]  
     
     public GameObject        projectilePrefab;
@@ -22,12 +23,27 @@ public class Slingshot : MonoBehaviour
 
     public bool              aimingMode; 
 
+    [SerializeField] private Transform point1;
+    [SerializeField] private Transform point2;
 
+    private LineRenderer rubberBand;
+    private AudioSource audioSource;
+    
+    void Start(){
+        rubberBand = GetComponent<LineRenderer>();
+        rubberBand.positionCount = 3;
+        rubberBand.SetPosition(0, point1.position);
+        rubberBand.SetPosition(2, point2.position);
+        rubberBand.SetPosition(1, launchPos);
+        audioSource = GetComponent<AudioSource>();
+    }
+    
+    
     void Awake() {
         Transform launchPointTrans = transform.Find("LaunchPoint");
         launchPoint = launchPointTrans.gameObject;
         launchPoint.SetActive( false );
-        launchPos = launchPointTrans.position;                                 
+        launchPos = launchPointTrans.position;                              
     }
 
     void OnMouseEnter() {
@@ -71,8 +87,13 @@ public class Slingshot : MonoBehaviour
         // Move the projectile to this new position
         Vector3 projPos = launchPos + mouseDelta;
         projectile.transform.position = projPos;
+
+        //mark our middle position (1) with the point of the projectile since we want the rubber band elastic effect
+        rubberBand.SetPosition(1, projectile.transform.position);
+
         if ( Input.GetMouseButtonUp(0) ) {                 
             aimingMode = false;
+            audioSource.Play();
             Rigidbody projRB = projectile.GetComponent<Rigidbody>();
             projRB.isKinematic = false;                                       
             projRB.collisionDetectionMode = CollisionDetectionMode.Continuous;
@@ -82,4 +103,8 @@ public class Slingshot : MonoBehaviour
             // Add a ProjectileLine to the Projectile
             _ = Instantiate<GameObject>(projectileLinePrefab, projectile.transform);
             projectile = null;
-            MissionDemolition.SHOT_FIRED();     
+            MissionDemolition.SHOT_FIRED();                                                 
+        }
+     }
+
+}
